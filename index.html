@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VOYCE — Transform Your Fear into Fluency</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root { --teal: #4a90b8; --teal-light: #7bb3d3; --teal-bright: #5bc4e0; --bg: #0d1117; --bg2: #111820; --bg3: #162030; --text: #f0f4f8; --muted: #8ba5b8; --border: rgba(123, 179, 211, 0.15); --green: #4ade80; --red: #f87171; --yellow: #fbbf24; }
+      html { scroll-behavior: smooth; }
+      body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+      #landingView { display: block; } #appView { display: none; }
+      nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 18px 60px; display: flex; align-items: center; justify-content: space-between; background: rgba(13,17,23,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+      .nav-logo { font-size: 22px; font-weight: 800; color: var(--teal-light); letter-spacing: 2px; flex: 1; }
+      .nav-links { display: flex; gap: 36px; }
+      .nav-cta-wrap { flex: 1; display: flex; justify-content: flex-end; }
+      .nav-links a { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; }
+      .nav-cta { background: linear-gradient(135deg, var(--teal), var(--teal-light)); color: #fff; border: none; padding: 10px 24px; border-radius: 25px; font-weight: 600; font-size: 14px; cursor: pointer; }
+      .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 40px 80px; position: relative; overflow: hidden; }
+      .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(74,144,184,0.12) 0%, transparent 70%); pointer-events: none; }
+      .hero-grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(74,144,184,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(74,144,184,0.04) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; }
+      .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(74,144,184,0.1); border: 1px solid rgba(74,144,184,0.25); border-radius: 25px; padding: 8px 18px; font-size: 13px; color: var(--teal-light); margin-bottom: 32px; }
+      .hero h1 { font-size: clamp(48px,8vw,88px); font-weight: 900; line-height: 1.05; letter-spacing: -2px; margin-bottom: 20px; }
+      .hero h1 span { background: linear-gradient(135deg, var(--teal-light), var(--teal-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      .hero-sub { font-size: clamp(16px,2vw,20px); color: var(--muted); max-width: 620px; line-height: 1.7; margin-bottom: 48px; }
+      .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-bottom: 72px; }
+      .btn-primary { background: linear-gradient(135deg, var(--teal), var(--teal-light)); color: #fff; border: none; padding: 16px 36px; border-radius: 30px; font-size: 16px; font-weight: 700; cursor: pointer; text-decoration: none; display: inline-block; }
+      .btn-ghost-l { background: transparent; color: var(--teal-light); border: 1.5px solid rgba(123,179,211,0.4); padding: 16px 36px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
+      .stats { display: flex; gap: 60px; justify-content: center; flex-wrap: wrap; }
+      .stat { text-align: center; }
+      .stat-num { font-size: 32px; font-weight: 800; color: var(--teal-light); }
+      .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+      .scroll-hint { position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--muted); font-size: 12px; animation: bounce 2s infinite; }
+      @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)} }
+      .scroll-arrow { width: 18px; height: 18px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(45deg); }
+      .section-inner { max-width: 1200px; margin: 0 auto; padding: 100px 60px; }
+      .section-badge { display: inline-block; background: rgba(74,144,184,0.1); border: 1px solid rgba(74,144,184,0.2); border-radius: 20px; padding: 6px 16px; font-size: 12px; color: var(--teal-light); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 18px; }
+      .section-title { font-size: clamp(30px,4vw,46px); font-weight: 800; letter-spacing: -1px; margin-bottom: 14px; }
+      .section-title span { background: linear-gradient(135deg, var(--teal-light), var(--teal-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      .section-sub { color: var(--muted); font-size: 16px; line-height: 1.7; max-width: 580px; }
+      .steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; margin-top: 56px; }
+      .step { background: var(--bg3); border: 1px solid var(--border); border-radius: 18px; padding: 28px 22px; }
+      .step-num { width: 38px; height: 38px; background: linear-gradient(135deg, var(--teal), var(--teal-light)); border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 800; margin-bottom: 18px; }
+      .step-icon { font-size: 30px; margin-bottom: 12px; }
+      .step h3 { font-size: 16px; font-weight: 700; margin-bottom: 9px; }
+      .step p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+      .metrics-section-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; color: var(--teal-light); letter-spacing: 1.5px; text-transform: uppercase; margin: 40px 0 16px; }
+      .metrics-section-label::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+      .metrics-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+      .metric-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 15px; padding: 24px; }
+      .metric-icon { font-size: 26px; margin-bottom: 12px; }
+      .metric-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 7px; }
+      .metric-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+      .metric-bar { height: 3px; background: rgba(255,255,255,0.07); border-radius: 2px; margin-top: 14px; overflow: hidden; }
+      .metric-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--teal), var(--teal-light)); }
+      .metric-card.video { border-color: rgba(91,196,224,0.2); }
+      .demo-placeholder { background: var(--bg2); border: 2px dashed rgba(123,179,211,0.2); border-radius: 24px; padding: 80px 40px; text-align: center; margin-top: 56px; }
+      .demo-placeholder-icon { font-size: 56px; margin-bottom: 20px; }
+      .demo-placeholder h3 { font-size: 24px; font-weight: 800; margin-bottom: 10px; }
+      .demo-placeholder p { font-size: 15px; color: var(--muted); max-width: 480px; margin: 0 auto; line-height: 1.6; }
+      .try-voyce-btn { display: inline-flex; align-items: center; gap: 10px; background: linear-gradient(135deg, var(--teal), var(--teal-bright)); color: #fff; border: none; padding: 18px 44px; border-radius: 30px; font-size: 18px; font-weight: 800; cursor: pointer; margin-top: 32px; animation: pulse-glow 2s infinite; letter-spacing: 0.5px; }
+      @keyframes pulse-glow { 0%,100%{box-shadow:0 0 0 0 rgba(91,196,224,0.4)}50%{box-shadow:0 0 0 14px rgba(91,196,224,0)} }
+      .beta-form { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+      .beta-input { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 11px 18px; color: var(--text); font-size: 14px; width: 280px; outline: none; }
+      .beta-input::placeholder { color: var(--muted); }
+      .beta-btn { background: linear-gradient(135deg, var(--teal), var(--teal-light)); color: #fff; border: none; padding: 11px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; }
+      .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; margin-top: 56px; }
+      .price-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 34px 26px; position: relative; }
+      .price-card.featured { border-color: var(--teal); background: linear-gradient(135deg, rgba(74,144,184,0.08), rgba(91,196,224,0.04)); }
+      .featured-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--teal), var(--teal-light)); color: #fff; padding: 4px 16px; border-radius: 12px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+      .price-name { font-size: 13px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+      .price-amount { font-size: 40px; font-weight: 900; color: var(--text); margin-bottom: 4px; line-height: 1; }
+      .price-amount span { font-size: 15px; font-weight: 500; color: var(--muted); }
+      .price-desc { font-size: 13px; color: var(--muted); margin-bottom: 24px; margin-top: 6px; }
+      .price-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+      .price-features li { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+      .price-features li::before { content: "✓"; color: var(--teal-light); font-weight: 700; }
+      .price-features li.no { opacity: 0.4; }
+      .price-features li.no::before { content: "✕"; color: var(--muted); }
+      .price-btn { width: 100%; padding: 13px; border-radius: 11px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; }
+      .price-btn-primary { background: linear-gradient(135deg, var(--teal), var(--teal-light)); color: #fff; }
+      .price-btn-ghost { background: transparent; color: var(--teal-light); border: 1.5px solid rgba(123,179,211,0.3); }
+      .price-note { font-size: 11px; color: var(--muted); text-align: center; margin-top: 10px; }
+      .testimonials-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 56px; }
+      .tcard { background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 26px; }
+      .stars { color: #fbbf24; font-size: 12px; margin-bottom: 12px; }
+      .tcard-quote { font-size: 14px; color: var(--text); line-height: 1.7; margin-bottom: 18px; font-style: italic; }
+      .tcard-quote::before { content: '"'; color: var(--teal-light); font-size: 36px; line-height: 0; vertical-align: -14px; margin-right: 3px; }
+      .tcard-author { display: flex; align-items: center; gap: 12px; }
+      .tcard-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--teal), var(--teal-light)); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+      .tcard-name { font-size: 13px; font-weight: 700; }
+      .tcard-role { font-size: 11px; color: var(--muted); }
+      #cta { padding: 120px 60px; text-align: center; position: relative; }
+      .cta-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(74,144,184,0.1) 0%, transparent 70%); pointer-events: none; }
+      #cta h2 { font-size: clamp(36px,5vw,58px); font-weight: 900; letter-spacing: -2px; margin-bottom: 14px; }
+      #cta h2 span { background: linear-gradient(135deg, var(--teal-light), var(--teal-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      #cta p { color: var(--muted); font-size: 17px; margin-bottom: 36px; max-width: 480px; margin-left: auto; margin-right: auto; }
+      footer { border-top: 1px solid var(--border); padding: 36px 60px; display: flex; justify-content: space-between; align-items: center; }
+      .footer-logo { font-size: 17px; font-weight: 800; color: var(--teal-light); letter-spacing: 2px; }
+      .footer-links { display: flex; gap: 26px; }
+      .footer-links a { color: var(--muted); text-decoration: none; font-size: 13px; }
+      .footer-copy { font-size: 11px; color: var(--muted); }
+      .full-bg { background: var(--bg2); }
+      .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+      .fade-in.visible { opacity: 1; transform: translateY(0); }
+      #trialOverlay { display: none; position: fixed; inset: 0; background: rgba(13,17,23,0.92); backdrop-filter: blur(8px); z-index: 999; align-items: center; justify-content: center; }
+      #trialOverlay.show { display: flex; }
+      .trial-box { background: var(--bg2); border: 1px solid rgba(123,179,211,0.3); border-radius: 24px; padding: 48px 44px; text-align: center; max-width: 480px; width: 90%; }
+      .trial-icon { font-size: 52px; margin-bottom: 16px; }
+      .trial-box h2 { font-size: 26px; font-weight: 900; margin-bottom: 10px; }
+      .trial-box h2 span { background: linear-gradient(135deg, var(--teal-light), var(--teal-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      .trial-box p { color: var(--muted); font-size: 15px; line-height: 1.7; margin-bottom: 28px; }
+      .trial-pills { display: flex; gap: 12px; justify-content: center; margin-bottom: 28px; flex-wrap: wrap; }
+      .trial-pill { background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 10px 18px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 7px; }
+      .trial-pill .pill-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+      .trial-start-btn { background: linear-gradient(135deg, var(--teal), var(--teal-light)); color: #fff; border: none; padding: 15px 40px; border-radius: 25px; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; }
+      .app-nav { border-bottom: 1px solid var(--border); padding: 0 16px; display: flex; align-items: center; background: rgba(13,17,23,0.98); position: sticky; top: 0; z-index: 100; height: 52px; }
+      .app-nav-left { display: flex; align-items: center; gap: 2px; flex: 1; }
+      .app-nav-logo { font-size: 17px; font-weight: 900; letter-spacing: 3px; color: var(--teal-light); cursor: pointer; padding: 6px 10px; user-select: none; }
+      .app-nav-divider { width: 1px; height: 20px; background: rgba(123,179,211,0.2); margin: 0 6px; }
+      .app-nav-btn { background: transparent; border: 1px solid transparent; border-radius: 8px; padding: 6px 12px; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+      .app-nav-btn.active { color: var(--text); background: rgba(74,144,184,0.12); border-color: rgba(123,179,211,0.22); }
+      .app-nav-back { background: transparent; border: 1px solid rgba(123,179,211,0.2); width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--muted); font-size: 18px; margin-left: 10px; }
+      .app-page { display: none; }
+      .app-page.active { display: block; }
+      .wrap { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+      .tool-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 28px; }
+      .tool-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 18px; padding: 24px; position: relative; overflow: hidden; }
+      .tool-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+      .tool-card.coach::before { background: linear-gradient(90deg, var(--teal), var(--teal-bright)); }
+      .tool-card.analyzer::before { background: linear-gradient(90deg, var(--green), var(--teal-bright)); }
+      .tool-badge { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; border-radius: 20px; padding: 3px 10px; margin-bottom: 10px; }
+      .tool-card.coach .tool-badge { color: var(--teal-bright); background: rgba(91,196,224,0.1); border: 1px solid rgba(91,196,224,0.2); }
+      .tool-card.analyzer .tool-badge { color: var(--green); background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.2); }
+      .tool-title { font-size: 17px; font-weight: 800; margin-bottom: 8px; }
+      .tool-desc { font-size: 13px; color: var(--muted); line-height: 1.6; margin-bottom: 18px; }
+      .btn-tool { width: 100%; background: linear-gradient(135deg, var(--teal), var(--teal-light)); border: none; border-radius: 10px; padding: 11px; color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; }
+      .btn-tool:disabled { background: rgba(74,144,184,0.25); cursor: not-allowed; color: var(--muted); }
+      .used-badge { display: inline-block; background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.3); border-radius: 8px; padding: 3px 10px; font-size: 11px; color: var(--red); font-weight: 600; margin-bottom: 6px; }
+      .section-title-app { font-size: 16px; font-weight: 800; background: linear-gradient(135deg, var(--teal-light), var(--teal-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 14px; }
+      .recent-list { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+      .recent-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid rgba(123,179,211,0.06); cursor: pointer; }
+      .recent-item:last-child { border-bottom: none; }
+      .recent-info { display: flex; align-items: center; gap: 14px; }
+      .recent-name { font-size: 13px; font-weight: 600; }
+      .recent-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+      .score-badge { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--teal), var(--teal-light)); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; }
+      .type-badge { font-size: 10px; color: var(--teal-bright); background: rgba(91,196,224,0.1); border: 1px solid rgba(91,196,224,0.15); border-radius: 8px; padding: 3px 9px; font-weight: 600; }
+      .empty-recent { padding: 32px; text-align: center; font-size: 13px; color: var(--muted); }
+      .recent-item-arrow { font-size: 13px; color: var(--muted); margin-left: 10px; }
+      .session-detail-header { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; }
+      .session-detail-header h2 { font-size: 20px; font-weight: 900; flex: 1; }
+      .session-detail-meta { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+      .session-meta-pill { background: var(--bg3); border: 1px solid var(--border); border-radius: 20px; padding: 5px 13px; font-size: 12px; color: var(--muted); font-weight: 600; }
+      .session-meta-pill.highlight { color: var(--teal-light); border-color: rgba(123,179,211,0.3); background: rgba(74,144,184,0.08); }
+      .session-script-box { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--teal); border-radius: 0 14px 14px 0; padding: 20px 22px; font-size: 13px; color: var(--muted); line-height: 1.8; white-space: pre-wrap; margin-bottom: 24px; max-height: 260px; overflow-y: auto; }
+      .session-section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--teal-bright); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+      .session-section-label::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+      #sessionReportFrame { width: 100%; border: none; border-radius: 16px; display: block; min-height: 400px; }
+      .score-ring { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--teal), var(--teal-light)); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+      .score-ring-letter { font-size: 18px; font-weight: 900; color: #fff; line-height: 1; }
+      .score-ring-num { font-size: 9px; color: rgba(255,255,255,0.8); margin-top: 1px; }
+      .page-header { margin-bottom: 28px; }
+      .page-header .tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+      .page-header h2 { font-size: 22px; font-weight: 900; }
+      .form-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 28px; }
+      .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+      .field-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 8px; }
+      .inp { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; color: var(--text); font-size: 13px; outline: none; font-family: inherit; }
+      .inp:focus { border-color: var(--teal-light); }
+      textarea.inp { resize: vertical; line-height: 1.7; }
+      .word-count { font-size: 11px; color: var(--muted); text-align: right; margin-top: 4px; }
+      .btn-analyze { width: 100%; margin-top: 20px; background: linear-gradient(135deg, var(--teal), var(--teal-light)); border: none; border-radius: 12px; padding: 14px; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; }
+      .btn-analyze:disabled { background: rgba(74,144,184,0.3); cursor: not-allowed; }
+      .btn-back-app { background: rgba(74,144,184,0.1); border: 1px solid rgba(123,179,211,0.25); border-radius: 10px; padding: 9px 18px; color: var(--teal-light); font-size: 13px; font-weight: 600; cursor: pointer; }
+      .error-box { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); border-radius: 12px; padding: 14px; color: var(--red); font-size: 13px; margin-top: 16px; display: none; }
+      .results-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+      .results-mode { font-size: 11px; font-weight: 700; color: var(--teal-bright); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+      .summary-card { background: linear-gradient(135deg, rgba(74,144,184,0.1), rgba(91,196,224,0.04)); border: 1px solid rgba(123,179,211,0.3); border-radius: 20px; padding: 28px; margin-bottom: 24px; }
+      .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+      .chip { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 7px 13px; }
+      .chip-label { font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.8px; }
+      .chip-val { font-size: 12px; font-weight: 600; }
+      .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+      .tab-btn { background: rgba(74,144,184,0.08); border: 1px solid rgba(123,179,211,0.2); border-radius: 10px; padding: 9px 16px; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; }
+      .tab-btn.active { background: linear-gradient(135deg, var(--teal), var(--teal-light)); border-color: transparent; color: #fff; }
+      .tab-content { display: none; }
+      .tab-content.active { display: block; }
+      .suggestion-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 14px; position: relative; overflow: hidden; }
+      .suggestion-card::before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--teal), var(--teal-bright), var(--green)); }
+      .suggestion-num { font-size: 11px; font-weight: 700; color: var(--teal-bright); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px; }
+      .suggestion-row { display: grid; grid-template-columns: 1fr 28px 1fr; gap: 10px; align-items: center; margin-bottom: 12px; }
+      .suggestion-box { background: var(--bg3); border-radius: 10px; padding: 14px; }
+      .suggestion-box.orig { border-left: 3px solid var(--red); }
+      .suggestion-box.impr { border-left: 3px solid var(--green); }
+      .suggestion-box-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+      .orig .suggestion-box-label { color: var(--red); }
+      .impr .suggestion-box-label { color: var(--green); }
+      .suggestion-text { font-size: 13px; color: var(--text); line-height: 1.5; font-style: italic; }
+      .suggestion-arrow { font-size: 16px; color: var(--teal-bright); text-align: center; }
+      .suggestion-reason { font-size: 12px; color: var(--muted); background: rgba(74,144,184,0.06); border: 1px solid rgba(74,144,184,0.12); border-radius: 8px; padding: 10px 14px; }
+      .tip-item { background: var(--bg2); border-radius: 0 12px 12px 0; padding: 14px 18px; margin-bottom: 10px; font-size: 13px; color: var(--text); line-height: 1.6; }
+      .tip-item:nth-child(odd) { border-left: 3px solid var(--green); }
+      .tip-item:nth-child(even) { border-left: 3px solid var(--teal-bright); }
+      .script-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 24px; font-size: 13px; line-height: 1.9; white-space: pre-wrap; }
+      .script-box.muted-text { color: var(--muted); }
+      .empty-state { background: var(--bg2); border: 1px dashed var(--border); border-radius: 12px; padding: 32px; text-align: center; font-size: 13px; color: var(--muted); }
+      .input-tabs { display: flex; background: var(--bg3); border-radius: 12px; padding: 4px; margin-bottom: 20px; }
+      .input-tab { flex: 1; background: transparent; border: 1px solid transparent; border-radius: 9px; padding: 10px; color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; }
+      .input-tab.active { background: var(--bg2); border-color: var(--border); color: var(--text); }
+      .upload-area { border: 2px dashed rgba(123,179,211,0.25); border-radius: 14px; padding: 50px 24px; text-align: center; cursor: pointer; position: relative; background: var(--bg3); }
+      .upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+      .format-tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+      .format-tag { background: rgba(74,144,184,0.1); border: 1px solid rgba(74,144,184,0.2); border-radius: 8px; padding: 3px 10px; font-size: 11px; color: var(--teal-light); font-weight: 600; }
+      .record-box { background: var(--bg3); border-radius: 14px; overflow: hidden; min-height: 200px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; position: relative; }
+      .record-idle { text-align: center; padding: 32px; }
+      .record-idle .idle-icon { font-size: 48px; margin-bottom: 10px; }
+      .record-idle .idle-text { font-size: 13px; color: var(--muted); }
+      #liveVideo { width: 100%; max-height: 260px; object-fit: cover; display: none; border-radius: 14px; }
+      .rec-badge { display: none; position: absolute; top: 12px; left: 12px; background: rgba(248,113,113,0.9); border-radius: 20px; padding: 5px 12px; font-size: 11px; font-weight: 700; color: #fff; align-items: center; gap: 6px; }
+      .rec-dot { width: 8px; height: 8px; border-radius: 50%; background: #fff; animation: blink 1s infinite; }
+      @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+      .rec-timer { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 10px; display: none; }
+      .btn-record { width: 100%; border: 1px solid rgba(248,113,113,0.35); border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; background: rgba(248,113,113,0.12); color: var(--red); }
+      .preview-media { background: var(--bg3); border-radius: 14px; overflow: hidden; margin-bottom: 14px; padding: 16px; text-align: center; }
+      .preview-info { display: flex; align-items: center; justify-content: space-between; background: var(--bg3); border-radius: 12px; padding: 12px 16px; margin-bottom: 16px; }
+      .preview-name { font-size: 13px; font-weight: 600; }
+      .preview-meta { font-size: 11px; color: var(--muted); margin-top: 2px; }
+      .btn-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      .spinner-wrap { text-align: center; padding: 60px 24px; display: none; }
+      .spinner { width: 56px; height: 56px; border: 3px solid rgba(123,179,211,0.15); border-top-color: var(--teal-light); border-radius: 50%; animation: spin 0.9s linear infinite; margin: 0 auto 20px; }
+      @keyframes spin { to { transform: rotate(360deg); } }
+      .page-footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+      .footer-logo-app { font-size: 14px; font-weight: 900; letter-spacing: 3px; color: var(--teal-light); }
+      .footer-url { font-size: 11px; color: var(--teal-bright); font-weight: 600; }
+      #trialDoneOverlay { display: none; position: fixed; inset: 0; background: rgba(13,17,23,0.95); backdrop-filter: blur(8px); z-index: 999; align-items: center; justify-content: center; }
+      #trialDoneOverlay.show { display: flex; }
+      .done-box { background: var(--bg2); border: 1px solid rgba(123,179,211,0.3); border-radius: 24px; padding: 48px 44px; text-align: center; max-width: 500px; width: 90%; }
+      .done-icon { font-size: 52px; margin-bottom: 16px; }
+      .done-box h2 { font-size: 24px; font-weight: 900; margin-bottom: 10px; }
+      .done-box h2 span { background: linear-gradient(135deg, var(--teal-light), var(--teal-bright)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      .done-box p { color: var(--muted); font-size: 15px; line-height: 1.7; margin-bottom: 24px; }
+      .done-beta-input { background: var(--bg3); border: 1px solid var(--border); border-radius: 10px; padding: 13px 18px; color: var(--text); font-size: 14px; width: 100%; outline: none; margin-bottom: 12px; }
+      .done-beta-btn { width: 100%; background: linear-gradient(135deg, var(--teal), var(--teal-light)); color: #fff; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; }
+      .done-back-link { margin-top: 14px; font-size: 13px; color: var(--muted); cursor: pointer; text-decoration: underline; }
+      @media (max-width:600px) { .grid-2,.tool-grid,.btn-row{grid-template-columns:1fr} .suggestion-row{grid-template-columns:1fr} .steps,.pricing-grid,.testimonials-grid{grid-template-columns:1fr} }
+    </style>
+  </head>
+  <body>
+    <div id="trialOverlay">
+      <div class="trial-box">
+        <div class="trial-icon">🎙️</div>
+        <h2>You're in. <span>Try VOYCE free.</span></h2>
+        <p>You get one free trial of each tool — no sign up needed.</p>
+        <div class="trial-pills">
+          <div class="trial-pill"><div class="pill-dot"></div>1x Script Coach</div>
+          <div class="trial-pill"><div class="pill-dot"></div>1x Performance Analyzer</div>
+        </div>
+        <button class="trial-start-btn" onclick="enterApp()">Let's Go</button>
+      </div>
+    </div>
+    <div id="trialDoneOverlay">
+      <div class="done-box">
+        <div class="done-icon">🚀</div>
+        <h2>You've used your <span>free trials.</span></h2>
+        <p>Want unlimited access? Join the beta and be the first to know when VOYCE fully launches.</p>
+        <input type="email" id="doneEmail" class="done-beta-input" placeholder="Enter your email for early access" />
+        <button class="done-beta-btn" onclick="submitDoneBeta()">Join the Beta</button>
+        <div id="doneBetaMsg" style="display:none;margin-top:14px;font-size:14px;color:var(--green);font-weight:600">You're on the list!</div>
+        <div class="done-back-link" onclick="goBackToLanding()">Back to VOYCE site</div>
+      </div>
+    </div>
+    <div id="landingView">
+      <nav id="landingNav">
+        <div class="nav-logo">VOYCE</div>
+        <div class="nav-links"><a href="#how">About</a><a href="#features">Features</a><a href="#demo">Demo</a><a href="#pricing">Pricing</a></div>
+        <div class="nav-cta-wrap"><button class="nav-cta" onclick="showTrialOverlay()">Get Started Free</button></div>
+      </nav>
+      <div class="hero">
+        <div class="hero-bg"></div><div class="hero-grid"></div>
+        <div class="badge fade-in">🎙️ AI-Powered Public Speaking Coach</div>
+        <h1 class="fade-in">Welcome to <span>VOYCE</span></h1>
+        <p class="hero-sub fade-in">Transform your fear into fluency. The platform that analyzes <strong style="color:var(--text)">14 metrics</strong> across your voice and presence.</p>
+        <div class="hero-btns fade-in">
+          <button class="btn-primary" onclick="showTrialOverlay()">Start Free — Try Both Tools</button>
+          <a href="#how" class="btn-ghost-l">See How It Works</a>
+        </div>
+        <div class="stats fade-in">
+          <div class="stat"><div class="stat-num">77%</div><div class="stat-label">of people fear public speaking</div></div>
+          <div class="stat"><div class="stat-num">14</div><div class="stat-label">AI metrics analyzed per session</div></div>
+          <div class="stat"><div class="stat-num">3x</div><div class="stat-label">faster improvement vs solo practice</div></div>
+        </div>
+        <div class="scroll-hint"><span>Scroll to explore</span><div class="scroll-arrow"></div></div>
+      </div>
+      <div class="full-bg" id="how">
+        <div class="section-inner">
+          <div class="fade-in"><div class="section-badge">How It Works</div><div class="section-title">Four steps to <span>fearless speaking</span></div><div class="section-sub">VOYCE guides you from nervous beginner to confident communicator.</div></div>
+          <div class="steps fade-in">
+            <div class="step"><div class="step-num">01</div><div class="step-icon">📋</div><h3>Set Your Context</h3><p>Choose your scenario — job interview, class presentation, business pitch, or everyday confidence.</p></div>
+            <div class="step"><div class="step-num">02</div><div class="step-icon">🎙️📹</div><h3>Speak and Record</h3><p>VOYCE captures your audio and video simultaneously through our AI pipeline.</p></div>
+            <div class="step"><div class="step-num">03</div><div class="step-icon">🧠</div><h3>AI Analyzes 14 Metrics</h3><p>9 acoustic + 5 visual metrics: pitch, pace, filler words, eye contact, posture, gestures, and more.</p></div>
+            <div class="step"><div class="step-num">04</div><div class="step-icon">📈</div><h3>Track Your Growth</h3><p>Watch your scores improve session to session with real data-driven feedback.</p></div>
+          </div>
+        </div>
+      </div>
+      <div id="features">
+        <div class="section-inner">
+          <div class="fade-in" style="text-align:center"><div class="section-badge">Features</div><div class="section-title" style="text-align:center">Everything you need to <span>speak with power</span></div></div>
+          <div class="metrics-section-label fade-in">🎙️ 9 Voice Metrics</div>
+          <div class="metrics-grid fade-in">
+            <div class="metric-card"><div class="metric-icon">🗣️</div><h3>Speaking Rate</h3><p>Tracks WPM toward the optimal 120-150 range.</p><div class="metric-bar"><div class="metric-fill" style="width:85%"></div></div></div>
+            <div class="metric-card"><div class="metric-icon">⏸️</div><h3>Pause Control</h3><p>Identifies strategic vs unplanned pauses.</p><div class="metric-bar"><div class="metric-fill" style="width:72%"></div></div></div>
+            <div class="metric-card"><div class="metric-icon">📢</div><h3>Volume and Energy</h3><p>Measures vocal intensity variation.</p><div class="metric-bar"><div class="metric-fill" style="width:91%"></div></div></div>
+            <div class="metric-card"><div class="metric-icon">🚫</div><h3>Filler Word Detection</h3><p>Catches every um, uh, like, and you know.</p><div class="metric-bar"><div class="metric-fill" style="width:68%"></div></div></div>
+            <div class="metric-card"><div class="metric-icon">🎵</div><h3>Pitch and Intonation</h3><p>Analyzes pitch variation to identify monotone delivery.</p><div class="metric-bar"><div class="metric-fill" style="width:79%"></div></div></div>
+            <div class="metric-card"><div class="metric-icon">💎</div><h3>Voice Stability</h3><p>Measures jitter and shimmer — markers of nervousness.</p><div class="metric-bar"><div class="metric-fill" style="width:83%"></div></div></div>
+            <div class="metric-card"><div class="metric-icon">⚡</div><h3>Voice Energy</h3><p>Composite energy score across pitch, volume, and pace.</p><div class="metric-bar"><div class="metric-fill" style="width:77%"></div></div></div>
+            <div class="metric-card"><div class="metric-icon">📚</div><h3>Vocabulary Complexity</h3><p>Analyzes lexical diversity and word choice.</p><div class="metric-bar"><div class="metric-fill" style="width:64%"></div></div></div>
+            <div class="metric-card"><div class="metric-icon">😊</div><h3>Speech Fluency</h3><p>Detects hesitations and repetitions.</p><div class="metric-bar"><div class="metric-fill" style="width:88%"></div></div></div>
+          </div>
+          <div class="metrics-section-label fade-in">📹 5 Presence Metrics</div>
+          <div class="metrics-grid fade-in">
+            <div class="metric-card video"><div class="metric-icon">👁️</div><h3>Eye Contact</h3><p>Tracks gaze direction and consistency.</p><div class="metric-bar"><div class="metric-fill" style="width:74%"></div></div></div>
+            <div class="metric-card video"><div class="metric-icon">🧍</div><h3>Posture</h3><p>Analyzes body alignment and authority.</p><div class="metric-bar"><div class="metric-fill" style="width:82%"></div></div></div>
+            <div class="metric-card video"><div class="metric-icon">🚶</div><h3>Movement</h3><p>Detects purposeful vs nervous movement.</p><div class="metric-bar"><div class="metric-fill" style="width:65%"></div></div></div>
+            <div class="metric-card video"><div class="metric-icon">🤲</div><h3>Hand Gestures</h3><p>Measures gesture frequency and naturalness.</p><div class="metric-bar"><div class="metric-fill" style="width:58%"></div></div></div>
+            <div class="metric-card video"><div class="metric-icon">😄</div><h3>Facial Expression</h3><p>Detects expressiveness and emotional range.</p><div class="metric-bar"><div class="metric-fill" style="width:70%"></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="full-bg" id="demo">
+        <div class="section-inner">
+          <div class="fade-in" style="text-align:center"><div class="section-badge">Live Demo</div><div class="section-title" style="text-align:center">See VOYCE <span>in action</span></div></div>
+          <div class="demo-placeholder fade-in">
+            <div class="demo-placeholder-icon">🎬</div>
+            <h3>Try It Yourself</h3>
+            <p>Click below for one free trial of each tool.</p>
+            <div id="tryVoyceWrap"><button class="try-voyce-btn" onclick="showTrialOverlay()">🎙️ Try VOYCE</button></div>
+            <div id="betaSection" style="display:none;margin-top:32px">
+              <p style="font-size:14px;color:var(--muted);margin-bottom:16px">Drop your email and we'll give you access when we launch.</p>
+              <div class="beta-form"><input type="email" id="betaEmail" placeholder="Enter your email" class="beta-input" /><button class="beta-btn" onclick="submitLandingBeta()">Get Early Access</button></div>
+              <div id="betaMsg" style="display:none;margin-top:16px;font-size:14px;color:var(--green);font-weight:600">You're on the list!</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="pricing">
+        <div class="section-inner">
+          <div class="fade-in" style="text-align:center"><div class="section-badge">Pricing</div><div class="section-title" style="text-align:center">Start free. <span>Scale with you.</span></div></div>
+          <div class="pricing-grid fade-in">
+            <div class="price-card"><div class="price-name">Free Trial</div><div class="price-amount">$0</div><div class="price-desc">1 trial of each tool.</div><ul class="price-features"><li>1 Script Coach session</li><li>1 Performance Analysis</li><li>Full 14-metric report</li><li class="no">Unlimited sessions</li></ul><button class="price-btn price-btn-ghost" onclick="showTrialOverlay()">Try Free Now</button><div class="price-note">No credit card required</div></div>
+            <div class="price-card"><div class="price-name">Credits</div><div class="price-amount">Pay <span>per session</span></div><div class="price-desc">Buy sessions when you need them.</div><ul class="price-features"><li>Purchase in bundles</li><li>Full 14-metric analysis</li><li>Credits never expire</li><li class="no">Unlimited sessions</li></ul><button class="price-btn price-btn-ghost">Buy Credits</button></div>
+            <div class="price-card featured"><div class="featured-badge">⚡ Best Value</div><div class="price-name">Pro Subscription</div><div class="price-amount">$9.99<span>/mo</span></div><div class="price-desc">Unlimited sessions, full access.</div><ul class="price-features"><li>Unlimited sessions</li><li>Full 14-metric analysis</li><li>Personalized coaching path</li><li>30+ scenario library</li><li>Priority AI feedback</li></ul><button class="price-btn price-btn-primary">Start Pro</button><div class="price-note">Cancel anytime</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="full-bg" id="testimonials">
+        <div class="section-inner">
+          <div class="fade-in" style="text-align:center"><div class="section-badge">Reviews</div><div class="section-title" style="text-align:center">Speakers who <span>found their voice</span></div></div>
+          <div class="testimonials-grid fade-in">
+            <div class="tcard"><div class="stars">★★★★★</div><div class="tcard-quote">I went from avoiding class presentations to volunteering to go first. The filler word tracker alone changed how I speak.</div><div class="tcard-author"><div class="tcard-avatar">JK</div><div><div class="tcard-name">Jamie K.</div><div class="tcard-role">Computer Science, Northeastern</div></div></div></div>
+            <div class="tcard"><div class="stars">★★★★★</div><div class="tcard-quote">Used VOYCE for two weeks before my internship interviews. My confidence score went from 62% to 89%. I got the offer.</div><div class="tcard-author"><div class="tcard-avatar">MR</div><div><div class="tcard-name">Maya R.</div><div class="tcard-role">Business Major, BU</div></div></div></div>
+            <div class="tcard"><div class="stars">★★★★★</div><div class="tcard-quote">Finally an app that gives me actual data instead of vague tips. The pitch and eye contact analysis is a game changer.</div><div class="tcard-author"><div class="tcard-avatar">DL</div><div><div class="tcard-name">Derek L.</div><div class="tcard-role">Marketing Manager, Boston</div></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div id="cta"><div class="cta-bg"></div><h2>Ready to find<br/><span>your VOYCE?</span></h2><p>One free trial of each tool. No credit card. No commitment.</p><button class="btn-primary" style="font-size:17px;padding:17px 44px" onclick="showTrialOverlay()">Try VOYCE Free</button></div>
+      <footer><div class="footer-logo">VOYCE</div><div class="footer-links"><a href="#how">How It Works</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#">Privacy</a><a href="#">Contact</a></div><div class="footer-copy">2026 VOYCE. All rights reserved.</div></footer>
+    </div>
+    <div id="appView">
+      <nav class="app-nav">
+        <div class="app-nav-left">
+          <div class="app-nav-logo" onclick="showAppPage('dashboard')">VOYCE</div>
+          <div class="app-nav-divider"></div>
+          <button class="app-nav-btn active" id="nav-dashboard" onclick="showAppPage('dashboard')">🏠 Dashboard</button>
+          <button class="app-nav-btn" id="nav-coach" onclick="showAppPage('coach')">✏️ Script Coach</button>
+          <button class="app-nav-btn" id="nav-analyzer" onclick="showAppPage('analyzer')">🎙️ Analyzer</button>
+        </div>
+        <button class="app-nav-back" onclick="goBackToLanding()" title="Back to site">&#8592;</button>
+      </nav>
+      <div class="app-page active" id="page-dashboard">
+        <div class="wrap">
+          <div style="margin-bottom:32px"><div style="font-size:11px;color:var(--teal-bright);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">Welcome</div><h1 style="font-size:26px;font-weight:900">Hey there 👋</h1><p style="color:var(--muted);font-size:14px;margin-top:6px">You have 1 free trial of each tool below.</p></div>
+          <div class="tool-grid">
+            <div class="tool-card coach"><div class="tool-badge">AI Writing Coach</div><div id="coachUsedBadge" style="display:none"><div class="used-badge">Trial Used</div></div><div class="tool-title">✏️ Script Coach</div><div class="tool-desc">Get AI feedback on your speech script. Inline edits, rewrites, and delivery tips.</div><button class="btn-tool" id="coachToolBtn" onclick="showAppPage('coach')">Open Script Coach</button></div>
+            <div class="tool-card analyzer"><div class="tool-badge">14 AI Metrics</div><div id="analyzerUsedBadge" style="display:none"><div class="used-badge">Trial Used</div></div><div class="tool-title">🎙️ Performance Analyzer</div><div class="tool-desc">Record or upload a video and get a full 14-metric analysis of your voice and presence.</div><button class="btn-tool" id="analyzerToolBtn" onclick="showAppPage('analyzer')">Open Analyzer</button></div>
+          </div>
+          <div id="dashMain">
+            <div class="section-title-app">Recent Activity</div>
+            <div class="recent-list" id="recentList"><div class="empty-recent">No sessions yet — try the Script Coach or Analyzer!</div></div>
+          </div>
+          <div id="sessionDetail" style="display:none">
+            <div class="session-detail-header"><button class="btn-back-app" onclick="closeSessionDetail()">Back</button><h2 id="sessionDetailTitle"></h2><div id="sessionDetailRing"></div></div>
+            <div class="session-detail-meta" id="sessionDetailMeta"></div>
+            <div id="sessionScriptSection" style="display:none"><div class="session-section-label">📝 Your Script</div><div class="session-script-box" id="sessionScriptContent"></div></div>
+            <div id="sessionCoachResults" style="display:none">
+              <div class="session-section-label">📋 Analysis Report</div>
+              <div class="summary-card" style="margin-bottom:16px"><div style="font-size:13px;font-weight:700;color:var(--teal-bright);margin-bottom:10px">Overall Feedback</div><div style="font-size:14px;color:#c8dde8;line-height:1.75" id="sessionCoachSummary"></div><div class="chips" id="sessionCoachChips"></div></div>
+              <div class="tabs" id="sessionCoachTabs"></div>
+              <div id="sessionCoachTabFeedback" class="tab-content"></div>
+              <div id="sessionCoachTabTips" class="tab-content"></div>
+              <div id="sessionCoachTabRewrite" class="tab-content"></div>
+              <div id="sessionCoachTabOriginal" class="tab-content"></div>
+            </div>
+            <div id="sessionAnalyzerResults" style="display:none"><div class="session-section-label">📊 Performance Report</div><iframe id="sessionReportFrame" scrolling="yes"></iframe></div>
+          </div>
+          <div class="page-footer"><div class="footer-logo-app">VOYCE</div><div class="footer-url">tryvoyce.tech</div></div>
+        </div>
+      </div>
+      <div class="app-page" id="page-coach">
+        <div class="wrap">
+          <div class="page-header"><div class="tag" style="color:#5bc4e0">✏️ Script Coach</div><h2>Perfect your script before you speak</h2></div>
+          <div id="coachForm">
+            <div class="form-card">
+              <div class="grid-2">
+                <div><label class="field-label">📌 Speech Topic</label><input class="inp" id="coachTopic" placeholder="e.g. Climate change..." /></div>
+                <div><label class="field-label">🏛️ Setting</label><select class="inp" id="coachSetting"><option value="">Select a setting...</option><option>Job Interview</option><option>Class Presentation</option><option>Business Pitch</option><option>Team Meeting</option><option>Conference Talk</option><option>Wedding Speech</option><option>Other</option></select></div>
+              </div>
+              <div class="grid-2">
+                <div><label class="field-label">👥 Audience</label><input class="inp" id="coachAudience" placeholder="e.g. Professors and classmates..." /></div>
+                <div><label class="field-label">⏱️ Target Duration (min)</label><input type="number" class="inp" id="coachTime" placeholder="e.g. 5" min="1" /></div>
+              </div>
+              <div><label class="field-label">📝 Your Script <span style="color:rgba(139,165,184,0.5);font-weight:400;text-transform:none;letter-spacing:0">— optional</span></label><textarea class="inp" id="coachScript" rows="7" placeholder="Paste your speech here... or leave blank for general tips."></textarea><div class="word-count" id="coachWordCount"></div></div>
+              <button class="btn-analyze" id="coachBtn" onclick="analyzeScript()">Analyze My Script</button>
+            </div>
+            <div class="error-box" id="coachError"></div>
+          </div>
+          <div id="coachResults" style="display:none">
+            <div class="results-header"><div><div class="results-mode" id="coachModeLabel"></div><h2>Your Script Analysis</h2></div><button class="btn-back-app" onclick="resetCoach()">New Analysis</button></div>
+            <div class="summary-card"><div style="font-size:13px;font-weight:700;color:var(--teal-bright);margin-bottom:10px">📋 Overall Feedback</div><div style="font-size:14px;color:#c8dde8;line-height:1.75" id="coachSummary"></div><div class="chips" id="coachChips"></div></div>
+            <div class="tabs" id="coachTabs"></div>
+            <div id="coachTabFeedback" class="tab-content"></div>
+            <div id="coachTabTips" class="tab-content"></div>
+            <div id="coachTabRewrite" class="tab-content"></div>
+            <div id="coachTabOriginal" class="tab-content"></div>
+          </div>
+          <div class="page-footer"><div class="footer-logo-app">VOYCE</div><div class="footer-url">tryvoyce.tech</div></div>
+        </div>
+      </div>
+      <div class="app-page" id="page-analyzer">
+        <div class="wrap">
+          <div class="page-header"><div class="tag" style="color:#4ade80">🎙️ Performance Analyzer</div><h2>Analyze your voice and presence</h2></div>
+          <div id="stepInput">
+            <div class="form-card">
+              <div style="margin-bottom:20px"><label class="field-label">🎯 Scenario</label><select class="inp" id="analyzerScenario"><option>Practice Session</option><option>Job Interview</option><option>Class Presentation</option><option>Business Pitch</option><option>Conference Talk</option><option>Team Meeting</option><option>Other</option></select></div>
+              <div class="input-tabs"><button class="input-tab active" id="tabUpload" onclick="switchTab('upload')">📁 Upload File</button><button class="input-tab" id="tabRecord" onclick="switchTab('record')">🎥 Record Video</button></div>
+              <div id="panelUpload">
+                <div class="upload-area" id="uploadArea">
+                  <input type="file" id="fileInput" accept=".mp4,.mov,.avi,.mkv,.webm,.mp3,.wav,.m4a" onchange="handleUpload(this)" />
+                  <div style="font-size:40px;margin-bottom:12px">🎬</div>
+                  <div style="font-size:15px;font-weight:700;margin-bottom:6px" id="uploadTitle">Drop your file here or click to browse</div>
+                  <div style="font-size:12px;color:var(--muted);margin-bottom:14px">Video or audio — up to 100 MB</div>
+                  <div class="format-tags"><span class="format-tag">MP4</span><span class="format-tag">MOV</span><span class="format-tag">AVI</span><span class="format-tag">MP3</span><span class="format-tag">WAV</span><span class="format-tag">M4A</span></div>
+                </div>
+              </div>
+              <div id="panelRecord" style="display:none">
+                <div class="record-box" id="recordBox">
+                  <div class="record-idle" id="recordIdle"><div class="idle-icon">🎥</div><div class="idle-text">Camera activates when you start recording</div></div>
+                  <video id="liveVideo" autoplay muted playsinline></video>
+                  <div class="rec-badge" id="recBadge"><div class="rec-dot"></div>REC</div>
+                </div>
+                <div class="rec-timer" id="recTimer">00:00</div>
+                <button class="btn-record" id="btnRecord" onclick="toggleRecord()">🔴 Start Recording</button>
+              </div>
+              <div class="error-box" id="analyzerError"></div>
+            </div>
+          </div>
+          <div id="stepPreview" style="display:none">
+            <div class="form-card">
+              <div style="font-size:11px;font-weight:700;color:var(--teal-bright);text-transform:uppercase;letter-spacing:1px;margin-bottom:16px">🎬 Review Before Submitting</div>
+              <div class="preview-media" id="previewMedia"></div>
+              <div class="preview-info"><div><div class="preview-name" id="previewName"></div><div class="preview-meta" id="previewMeta"></div></div><div style="font-size:20px">✅</div></div>
+              <div class="btn-row"><button class="btn-back-app" onclick="backToInput()">Re-record / Change File</button><button class="btn-analyze" style="margin-top:0" onclick="submitAnalysis()">Analyze This</button></div>
+              <div class="error-box" id="previewError"></div>
+            </div>
+          </div>
+          <div class="spinner-wrap" id="stepProcessing"><div class="spinner"></div><div style="font-size:20px;font-weight:800;margin-bottom:8px">Analyzing your speech...</div><div style="font-size:13px;color:var(--muted)">Running 14 AI metrics — keep this tab open.</div></div>
+          <div id="stepResults" style="display:none">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px"><h2 style="font-size:20px;font-weight:900">Your Performance Report</h2><button class="btn-back-app" onclick="backToInput()">Analyze Another</button></div>
+            <iframe id="resultsFrame" style="display:none;width:100%;border:none;border-radius:16px" scrolling="yes"></iframe>
+          </div>
+          <div class="page-footer"><div class="footer-logo-app">VOYCE</div><div class="footer-url">tryvoyce.tech</div></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function getTrials(){return{coach:sessionStorage.getItem("voyce_coach_used")==="1",analyzer:sessionStorage.getItem("voyce_analyzer_used")==="1"}}
+      function markUsed(t){sessionStorage.setItem("voyce_"+t+"_used","1");updateDashboardCards()}
+      function bothUsed(){const t=getTrials();return t.coach&&t.analyzer}
+      function showTrialOverlay(){document.getElementById("trialOverlay").classList.add("show")}
+      function enterApp(){document.getElementById("trialOverlay").classList.remove("show");document.getElementById("landingView").style.display="none";document.getElementById("appView").style.display="block";showAppPage("dashboard")}
+      function goBackToLanding(){document.getElementById("trialDoneOverlay").classList.remove("show");document.getElementById("appView").style.display="none";document.getElementById("landingView").style.display="block";document.getElementById("tryVoyceWrap").style.display="none";document.getElementById("betaSection").style.display="block";window.scrollTo({top:0,behavior:"smooth"})}
+      function showAppPage(page){document.querySelectorAll(".app-page").forEach(p=>p.classList.remove("active"));document.querySelectorAll(".app-nav-btn").forEach(b=>b.classList.remove("active"));document.getElementById("page-"+page).classList.add("active");const nb=document.getElementById("nav-"+page);if(nb)nb.classList.add("active");if(page==="dashboard"){loadDashboard();updateDashboardCards();document.getElementById("dashMain").style.display="block";document.getElementById("sessionDetail").style.display="none"}}
+      function updateDashboardCards(){const t=getTrials();document.getElementById("coachUsedBadge").style.display=t.coach?"block":"none";document.getElementById("analyzerUsedBadge").style.display=t.analyzer?"block":"none";document.getElementById("coachToolBtn").disabled=t.coach;document.getElementById("analyzerToolBtn").disabled=t.analyzer;if(t.coach)document.getElementById("coachToolBtn").textContent="Trial Used";if(t.analyzer)document.getElementById("analyzerToolBtn").textContent="Trial Used"}
+      function checkAndBlock(){if(bothUsed())setTimeout(()=>document.getElementById("trialDoneOverlay").classList.add("show"),1200)}
+      const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add("visible")}),{threshold:0.1});
+      document.querySelectorAll(".fade-in").forEach(el=>obs.observe(el));
+      window.addEventListener("scroll",()=>{const ln=document.getElementById("landingNav");if(ln)ln.style.background=window.scrollY>50?"rgba(13,17,23,0.98)":"rgba(13,17,23,0.85)"});
+      document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener("click",e=>{e.preventDefault();const t=document.querySelector(a.getAttribute("href"));if(t)t.scrollIntoView({behavior:"smooth"})}));
+      function submitLandingBeta(){const email=document.getElementById("betaEmail").value.trim();if(!email||!email.includes("@"))return;document.getElementById("betaEmail").style.display="none";document.querySelector(".beta-btn").style.display="none";document.getElementById("betaMsg").style.display="block"}
+      function submitDoneBeta(){const email=document.getElementById("doneEmail").value.trim();if(!email||!email.includes("@"))return;document.getElementById("doneEmail").style.display="none";document.querySelector(".done-beta-btn").style.display="none";document.getElementById("doneBetaMsg").style.display="block"}
+      function getHistory(){try{return JSON.parse(sessionStorage.getItem("voyce_history")||"[]")}catch{return[]}}
+      function saveToHistory(e){const h=getHistory();h.unshift({...e,date:new Date().toISOString().slice(0,10),id:Date.now()});sessionStorage.setItem("voyce_history",JSON.stringify(h.slice(0,20)));loadDashboard()}
+      function gradeFromScore(s){if(s>=93)return"A";if(s>=90)return"A-";if(s>=87)return"B+";if(s>=83)return"B";if(s>=80)return"B-";if(s>=77)return"C+";if(s>=73)return"C";if(s>=70)return"C-";return"D"}
+      function loadDashboard(){const h=getHistory();const list=document.getElementById("recentList");if(!h.length){list.innerHTML='<div class="empty-recent">No sessions yet — try the Script Coach or Analyzer!</div>';return}list.innerHTML=h.slice(0,20).map(r=>'<div class="recent-item" onclick="openSessionDetail('+r.id+')"><div class="recent-info"><div style="font-size:20px">'+(r.type==="analyzer"?"🎙️":"✏️")+'</div><div><div class="recent-name">'+r.name+'</div><div class="recent-meta">'+(r.type==="analyzer"?"Analyzer":"Script Coach")+' · '+r.date+(r.setting?' · '+r.setting:"")+'</div></div></div><div style="display:flex;align-items:center;gap:10px">'+(r.score?'<div class="score-badge">'+gradeFromScore(r.score)+"</div>":'<div class="type-badge">Script</div>')+'<span class="recent-item-arrow">›</span></div></div>').join("")}
+      function openSessionDetail(id){const r=getHistory().find(x=>x.id===id);if(!r)return;document.getElementById("dashMain").style.display="none";document.getElementById("sessionDetail").style.display="block";document.getElementById("sessionDetailTitle").textContent=r.name||"Session";const ring=document.getElementById("sessionDetailRing");ring.innerHTML=r.score?'<div class="score-ring"><div class="score-ring-letter">'+gradeFromScore(r.score)+'</div><div class="score-ring-num">'+r.score+'/100</div></div>':"";const meta=document.getElementById("sessionDetailMeta");let pills='<span class="session-meta-pill">'+(r.type==="analyzer"?"🎙️ Analyzer":"✏️ Script Coach")+'</span><span class="session-meta-pill">'+r.date+"</span>";if(r.setting)pills+='<span class="session-meta-pill highlight">'+r.setting+"</span>";if(r.score)pills+='<span class="session-meta-pill highlight">Score: '+r.score+"/100</span>";meta.innerHTML=pills;document.getElementById("sessionScriptSection").style.display="none";document.getElementById("sessionCoachResults").style.display="none";document.getElementById("sessionAnalyzerResults").style.display="none";if(r.type==="coach"){if(r.script){document.getElementById("sessionScriptSection").style.display="block";document.getElementById("sessionScriptContent").textContent=r.script}if(r.coachData){document.getElementById("sessionCoachResults").style.display="block";renderSessionCoachResults(r.coachData,r)}}else if(r.type==="analyzer"&&r.reportHtml){document.getElementById("sessionAnalyzerResults").style.display="block";const frame=document.getElementById("sessionReportFrame");frame.src=URL.createObjectURL(new Blob([r.reportHtml],{type:"text/html"}));frame.style.height="3200px"}window.scrollTo({top:0,behavior:"smooth"})}
+      function closeSessionDetail(){document.getElementById("sessionDetail").style.display="none";document.getElementById("dashMain").style.display="block"}
+      function renderSessionCoachResults(data,ctx){document.getElementById("sessionCoachSummary").textContent=data.feedback_summary||"";const chips=document.getElementById("sessionCoachChips");chips.innerHTML="";if(ctx.topic)chips.innerHTML+=chip("Topic",ctx.topic);if(ctx.setting)chips.innerHTML+=chip("Setting",ctx.setting);const sugg=data.inline_suggestions||[];document.getElementById("sessionCoachTabFeedback").innerHTML=sugg.length>0?sugg.map((s,i)=>'<div class="suggestion-card"><div class="suggestion-num">Edit '+(i+1)+'</div><div class="suggestion-row"><div class="suggestion-box orig"><div class="suggestion-box-label">Original</div><div class="suggestion-text">"'+s.original+'"</div></div><div class="suggestion-arrow">→</div><div class="suggestion-box impr"><div class="suggestion-box-label">Suggested</div><div class="suggestion-text">"'+s.suggestion+'"</div></div></div><div class="suggestion-reason">💡 '+s.reason+"</div></div>").join(""):'<div class="empty-state">No inline suggestions.</div>';const tips=data.delivery_tips&&data.delivery_tips.length>0?data.delivery_tips:data.generic_tips||[];document.getElementById("sessionCoachTabTips").innerHTML=tips.length>0?tips.map(t=>'<div class="tip-item">→ '+t+"</div>").join(""):'<div class="empty-state">No tips available.</div>';if(data.rewritten_script)document.getElementById("sessionCoachTabRewrite").innerHTML='<div class="script-box">'+data.rewritten_script+"</div>";if(ctx.script)document.getElementById("sessionCoachTabOriginal").innerHTML='<div class="script-box muted-text">'+ctx.script+"</div>";const tabsEl=document.getElementById("sessionCoachTabs");tabsEl.innerHTML="";[{id:"sessionCoachTabFeedback",label:"✏️ Suggestions ("+sugg.length+")",show:true},{id:"sessionCoachTabTips",label:"🎙️ Tips ("+tips.length+")",show:true},{id:"sessionCoachTabRewrite",label:"📝 Rewritten Script",show:!!data.rewritten_script},{id:"sessionCoachTabOriginal",label:"📄 Original Script",show:!!ctx.script}].filter(t=>t.show).forEach((t,i)=>{const b=document.createElement("button");b.className="tab-btn"+(i===0?" active":"");b.textContent=t.label;b.onclick=()=>{tabsEl.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));document.querySelectorAll("#sessionCoachResults .tab-content").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(t.id).classList.add("active")};tabsEl.appendChild(b)});document.querySelectorAll("#sessionCoachResults .tab-content").forEach(c=>c.classList.remove("active"));document.getElementById("sessionCoachTabFeedback").classList.add("active")}
+      let currentScript="";
+      document.getElementById("coachScript").addEventListener("input",function(){const w=this.value.trim().split(/\s+/).filter(Boolean).length;document.getElementById("coachWordCount").textContent=this.value.trim()?w+" words · ~"+Math.max(1,Math.round(w/130))+" min est.":""});
+      async function analyzeScript(){if(getTrials().coach){checkAndBlock();return}const topic=document.getElementById("coachTopic").value.trim();const setting=document.getElementById("coachSetting").value;const audience=document.getElementById("coachAudience").value.trim();const timeLimit=document.getElementById("coachTime").value.trim();const script=document.getElementById("coachScript").value.trim();currentScript=script;const btn=document.getElementById("coachBtn");const err=document.getElementById("coachError");btn.disabled=true;btn.textContent="✨ Analyzing...";err.style.display="none";try{const res=await fetch("/coach/analyze",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({topic,setting,audience,timeLimit,script})});const data=await res.json();if(!res.ok)throw new Error(data.error||"Analysis failed");renderCoachResults(data,{topic,setting,audience,timeLimit});markUsed("coach");saveToHistory({type:"coach",name:topic||setting||"Script Session",topic,setting,audience,timeLimit,script,coachData:data});checkAndBlock()}catch(e){err.textContent="⚠️ "+e.message;err.style.display="block"}btn.disabled=false;btn.textContent="Analyze My Script"}
+      function renderCoachResults(data,ctx){const modeLabels={full:"Full Analysis",no_script:"Context Only",generic:"General Tips"};document.getElementById("coachModeLabel").textContent=modeLabels[data.mode]||data.mode;document.getElementById("coachSummary").textContent=data.feedback_summary||"";const chips=document.getElementById("coachChips");chips.innerHTML="";if(ctx.topic)chips.innerHTML+=chip("Topic",ctx.topic);if(ctx.setting)chips.innerHTML+=chip("Setting",ctx.setting);if(ctx.audience)chips.innerHTML+=chip("Audience",ctx.audience);if(ctx.timeLimit)chips.innerHTML+=chip("Target",ctx.timeLimit+" min");if(data.estimated_duration)chips.innerHTML+=chip("Est. Duration",data.estimated_duration,"#5bc4e0");const sugg=data.inline_suggestions||[];document.getElementById("coachTabFeedback").innerHTML=sugg.length>0?sugg.map((s,i)=>'<div class="suggestion-card"><div class="suggestion-num">Edit '+(i+1)+'</div><div class="suggestion-row"><div class="suggestion-box orig"><div class="suggestion-box-label">Original</div><div class="suggestion-text">"'+s.original+'"</div></div><div class="suggestion-arrow">→</div><div class="suggestion-box impr"><div class="suggestion-box-label">Suggested</div><div class="suggestion-text">"'+s.suggestion+'"</div></div></div><div class="suggestion-reason">💡 '+s.reason+"</div></div>").join(""):'<div class="empty-state">No inline suggestions — provide a script for specific edits.</div>';const tips=data.delivery_tips&&data.delivery_tips.length>0?data.delivery_tips:data.generic_tips||[];document.getElementById("coachTabTips").innerHTML=tips.length>0?tips.map(t=>'<div class="tip-item">→ '+t+"</div>").join(""):'<div class="empty-state">No tips available.</div>';if(data.rewritten_script)document.getElementById("coachTabRewrite").innerHTML='<div class="script-box">'+data.rewritten_script+"</div>";if(currentScript)document.getElementById("coachTabOriginal").innerHTML='<div class="script-box muted-text">'+currentScript+"</div>";const tabsEl=document.getElementById("coachTabs");tabsEl.innerHTML="";[{id:"coachTabFeedback",label:"✏️ Suggestions ("+sugg.length+")",show:true},{id:"coachTabTips",label:"🎙️ Tips ("+tips.length+")",show:true},{id:"coachTabRewrite",label:"📝 Rewritten Script",show:!!data.rewritten_script},{id:"coachTabOriginal",label:"📄 Original",show:!!currentScript}].filter(t=>t.show).forEach((t,i)=>{const b=document.createElement("button");b.className="tab-btn"+(i===0?" active":"");b.textContent=t.label;b.onclick=()=>{document.querySelectorAll(".tab-btn").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".tab-content").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.getElementById(t.id).classList.add("active")};tabsEl.appendChild(b)});document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));document.getElementById("coachTabFeedback").classList.add("active");document.getElementById("coachForm").style.display="none";document.getElementById("coachResults").style.display="block"}
+      function resetCoach(){document.getElementById("coachForm").style.display="block";document.getElementById("coachResults").style.display="none"}
+      function chip(label,val,color){return'<div class="chip"><div class="chip-label">'+label+'</div><div class="chip-val" style="color:'+(color||"#f0f4f8")+'">'+val+"</div></div>"}
+      let activeTab="upload",selectedFile=null,previewURL=null,mediaRecorder=null,mediaStream=null,recChunks=[],isRecording=false,recInterval=null,recSecs=0;
+      function switchTab(tab){activeTab=tab;document.getElementById("tabUpload").classList.toggle("active",tab==="upload");document.getElementById("tabRecord").classList.toggle("active",tab==="record");document.getElementById("panelUpload").style.display=tab==="upload"?"block":"none";document.getElementById("panelRecord").style.display=tab==="record"?"block":"none";stopStream()}
+      function handleUpload(input){if(!input.files||!input.files[0])return;selectedFile=input.files[0];previewURL=URL.createObjectURL(selectedFile);showPreview()}
+      const ua=document.getElementById("uploadArea");
+      ua.addEventListener("dragover",e=>{e.preventDefault();ua.style.borderColor="var(--teal-light)"});
+      ua.addEventListener("dragleave",()=>{ua.style.borderColor="rgba(123,179,211,0.25)"});
+      ua.addEventListener("drop",e=>{e.preventDefault();ua.style.borderColor="rgba(123,179,211,0.25)";const f=e.dataTransfer.files[0];if(f){selectedFile=f;previewURL=URL.createObjectURL(f);showPreview()}});
+      async function toggleRecord(){if(!isRecording)await startRecord();else stopRecord()}
+      async function startRecord(){const err=document.getElementById("analyzerError");err.style.display="none";try{mediaStream=await navigator.mediaDevices.getUserMedia({video:true,audio:true});const vid=document.getElementById("liveVideo");vid.srcObject=mediaStream;vid.style.display="block";document.getElementById("recordIdle").style.display="none";document.getElementById("recBadge").style.display="flex";recChunks=[];mediaRecorder=new MediaRecorder(mediaStream,{mimeType:"video/webm"});mediaRecorder.ondataavailable=e=>{if(e.data.size>0)recChunks.push(e.data)};mediaRecorder.onstop=()=>{const blob=new Blob(recChunks,{type:"video/webm"});selectedFile=new File([blob],"recording.webm",{type:"video/webm"});previewURL=URL.createObjectURL(blob);stopStream();showPreview()};mediaRecorder.start(250);isRecording=true;recSecs=0;document.getElementById("recTimer").style.display="block";recInterval=setInterval(()=>{recSecs++;const m=String(Math.floor(recSecs/60)).padStart(2,"0"),s=String(recSecs%60).padStart(2,"0");document.getElementById("recTimer").textContent=m+":"+s},1000);document.getElementById("btnRecord").textContent="⬛ Stop Recording";document.getElementById("btnRecord").style.background="rgba(248,113,113,0.25)"}catch(e){err.textContent="⚠️ Could not access camera/microphone. Check permissions.";err.style.display="block"}}
+      function stopRecord(){if(mediaRecorder&&mediaRecorder.state!=="inactive")mediaRecorder.stop();clearInterval(recInterval);isRecording=false;document.getElementById("recTimer").style.display="none";document.getElementById("recBadge").style.display="none";document.getElementById("btnRecord").textContent="🔴 Start Recording";document.getElementById("btnRecord").style.background=""}
+      function stopStream(){if(mediaStream){mediaStream.getTracks().forEach(t=>t.stop());mediaStream=null}const vid=document.getElementById("liveVideo");vid.srcObject=null;vid.style.display="none";document.getElementById("recordIdle").style.display="block";document.getElementById("recBadge").style.display="none"}
+      function showPreview(){document.getElementById("stepInput").style.display="none";document.getElementById("stepPreview").style.display="block";const isVid=selectedFile&&(selectedFile.type.includes("video")||/\.(mp4|mov|avi|mkv|webm)$/i.test(selectedFile.name||""));document.getElementById("previewMedia").innerHTML=isVid?'<video src="'+previewURL+'" controls style="width:100%;border-radius:10px;max-height:300px;display:block"></video>':'<div style="padding:16px;text-align:center"><div style="font-size:36px;margin-bottom:10px">🎵</div><audio src="'+previewURL+'" controls style="width:100%"></audio></div>';document.getElementById("previewName").textContent=selectedFile&&selectedFile.name||"recording.webm";document.getElementById("previewMeta").textContent=(selectedFile?(selectedFile.size/1024/1024).toFixed(1):"0")+" MB · "+document.getElementById("analyzerScenario").value;document.getElementById("previewError").style.display="none"}
+      function backToInput(){stopStream();if(isRecording)stopRecord();selectedFile=null;previewURL=null;document.getElementById("stepInput").style.display="block";document.getElementById("stepPreview").style.display="none";document.getElementById("stepProcessing").style.display="none";document.getElementById("stepResults").style.display="none";document.getElementById("resultsFrame").style.display="none";document.getElementById("fileInput").value="";document.getElementById("analyzerError").style.display="none";document.getElementById("btnRecord").textContent="🔴 Start Recording";document.getElementById("btnRecord").style.background="";document.getElementById("recTimer").style.display="none";document.getElementById("recordIdle").style.display="block";document.getElementById("liveVideo").style.display="none"}
+      async function submitAnalysis(){if(getTrials().analyzer){checkAndBlock();return}document.getElementById("stepPreview").style.display="none";document.getElementById("stepProcessing").style.display="block";const fd=new FormData();fd.append("file",selectedFile);fd.append("scenario",document.getElementById("analyzerScenario").value);try{const res=await fetch("/analyzer/analyze",{method:"POST",body:fd});const data=await res.json();if(!res.ok)throw new Error(data.error||"Analysis failed");document.getElementById("stepProcessing").style.display="none";document.getElementById("stepResults").style.display="block";const frame=document.getElementById("resultsFrame");frame.style.display="block";frame.style.height="3000px";frame.src=URL.createObjectURL(new Blob([data.html],{type:"text/html"}));frame.onload=()=>{try{frame.style.height=frame.contentWindow.document.body.scrollHeight+40+"px"}catch(e){}};markUsed("analyzer");saveToHistory({type:"analyzer",name:document.getElementById("analyzerScenario").value,setting:document.getElementById("analyzerScenario").value,score:data.combined,reportHtml:data.html});checkAndBlock()}catch(e){document.getElementById("stepProcessing").style.display="none";document.getElementById("stepPreview").style.display="block";const err=document.getElementById("previewError");err.textContent="⚠️ "+e.message;err.style.display="block"}}
+    </script>
+  </body>
+</html>
