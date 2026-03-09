@@ -1,4 +1,8 @@
 import os, re, math, json, warnings, tempfile, subprocess
+
+subprocess.run(["apt-get", "update", "-qq"], check=False)
+subprocess.run(["apt-get", "install", "-y", "-qq", "ffmpeg"], check=False)
+
 from datetime import datetime
 from collections import Counter
 from flask import Flask, request, jsonify, send_from_directory
