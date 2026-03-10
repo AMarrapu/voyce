@@ -155,7 +155,7 @@ class VoiceAnalyzer:
 
     def transcribe(self):
         from faster_whisper import WhisperModel
-        mdl = WhisperModel("base", device="cpu", compute_type="int8")
+        mdl = WhisperModel("tiny", device="cpu", compute_type="int8")
         segments, _ = mdl.transcribe(self.wav)
         self.transcript = " ".join(s.text for s in segments).strip()
         return self
