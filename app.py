@@ -91,13 +91,13 @@ def coach_analyze():
 # ================================================================
 def extract_audio(src):
     out = src + "_audio.wav"
-    result = subprocess.run(
-        ["ffmpeg", "-y", "-i", src, "-ar", "16000", "-ac", "1", "-vn", out],
-        capture_output=True)
-    if result.returncode != 0:
-        raise ValueError("ffmpeg audio extract error: " + result.stderr.decode())
-    return out
-
+    try:
+        y, sr = librosa.load(src, sr=16000, mono=True)
+        import soundfile as sf
+        sf.write(out, y, 16000)
+        return out
+    except Exception as e:
+        raise ValueError("Audio extraction error: " + str(e))
 
 # ================================================================
 # VOICE ANALYZER
