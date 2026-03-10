@@ -1,7 +1,35 @@
 import os, re, math, json, warnings, tempfile, subprocess, stat, glob, shutil
 
-# ffmpeg is installed via start.sh before gunicorn boots
-# /workspace is prepended to PATH by start.sh
+# ================================================================
+# INSTALL STATIC FFMPEG BINARY
+# ================================================================
+def _install_ffmpeg():
+    ffmpeg_path = "/workspace/ffmpeg"
+    ffprobe_path = "/workspace/ffprobe"
+    if not os.path.exists(ffmpeg_path):
+        print("Downloading ffmpeg...")
+        subprocess.run([
+            "curl", "-L",
+            "https://github.com/yt-dlp/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz",
+            "-o", "/tmp/ffmpeg.tar.xz"
+        ], check=True)
+        subprocess.run(["tar", "-xf", "/tmp/ffmpeg.tar.xz", "-C", "/tmp/"], check=True)
+        # Find extracted folder
+        dirs = glob.glob("/tmp/ffmpeg-master-latest-linux64-gpl*/bin/ffmpeg")
+        probe_dirs = glob.glob("/tmp/ffmpeg-master-latest-linux64-gpl*/bin/ffprobe")
+        if dirs:
+            shutil.copy(dirs[0], ffmpeg_path)
+            os.chmod(ffmpeg_path, 0o755)
+            print("ffmpeg installed at", ffmpeg_path)
+        if probe_dirs:
+            shutil.copy(probe_dirs[0], ffprobe_path)
+            os.chmod(ffprobe_path, 0o755)
+            print("ffprobe installed at", ffprobe_path)
+    # Always add /workspace to PATH
+    os.environ["PATH"] = "/workspace:" + os.environ.get("PATH", "")
+    print("PATH set to:", os.environ["PATH"][:50])
+
+_install_ffmpeg()
 
 from datetime import datetime
 from collections import Counter
@@ -103,7 +131,6 @@ def extract_audio(src):
 # VOICE ANALYZER
 # ================================================================
 class VoiceAnalyzer:
-    # FIX: removed incorrect strip() on \b — patterns kept as-is for re.findall
     _FILLER = [
         r'\bum+\b', r'\buh+\b', r'\ber+\b', r'\bah+\b', r'\blike\b',
         r'\byou know\b', r'\bbasically\b', r'\bliterally\b', r'\bactually\b',
@@ -163,9 +190,7 @@ class VoiceAnalyzer:
         for p in self._FILLER:
             c = len(re.findall(p, txt))
             if c:
-                # FIX: use the pattern string as key after stripping regex anchors for display
-                label = p.replace(r'\b', '').replace('\\b', '')
-                bd[label] = c
+                bd[p.strip(r'\b')] = c
                 total += c
         rate = total / (self.dur / 60) if self.dur else 0
         sc, st = (100, "excellent") if rate <= 1 else (
@@ -285,20 +310,18 @@ class VideoAnalyzer:
         self.path = path
         self.results = {}
         import mediapipe as mp2
-        # FIX: renamed attributes to self.face / self.pose / self.hands
-        # (the analyze() method references self.face, self.pose, self.hands — not self.mp_face etc.)
-        self.face = mp2.solutions.face_mesh.FaceMesh(
+        self.mp_face = mp2.solutions.face_mesh.FaceMesh(
             static_image_mode=False, max_num_faces=1,
             refine_landmarks=True, min_detection_confidence=.5,
             min_tracking_confidence=.5)
-        self.pose = mp2.solutions.pose.Pose(
+        self.mp_pose = mp2.solutions.pose.Pose(
             static_image_mode=False, model_complexity=1,
             smooth_landmarks=True, min_detection_confidence=.5,
             min_tracking_confidence=.5)
-        self.hands = mp2.solutions.hands.Hands(
+        self.mp_hands = mp2.solutions.hands.Hands(
             static_image_mode=False, max_num_hands=2,
             min_detection_confidence=.5, min_tracking_confidence=.5)
-
+        
     @staticmethod
     def _d(a, b):
         return math.sqrt((a[0] - b[0])**2 + (a[1] - b[1])**2)
@@ -321,7 +344,6 @@ class VideoAnalyzer:
             proc += 1
             rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
             h, w = frame.shape[:2]
-            # FIX: was fr = self.face.process(rgb) — now correctly references self.face / self.pose
             fr = self.face.process(rgb)
             pr = self.pose.process(rgb)
             if fr.multi_face_landmarks:
@@ -699,3 +721,7 @@ def index():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
+
+
+
+
