@@ -1,32 +1,35 @@
-import os, re, math, json, warnings, tempfile, subprocess, stat
+import os, re, math, json, warnings, tempfile, subprocess, stat, glob, shutil
 
-# Install static ffmpeg binary
+# ================================================================
+# INSTALL STATIC FFMPEG BINARY
+# ================================================================
 def _install_ffmpeg():
     ffmpeg_path = "/workspace/ffmpeg"
+    ffprobe_path = "/workspace/ffprobe"
     if not os.path.exists(ffmpeg_path):
+        print("Downloading ffmpeg...")
         subprocess.run([
             "curl", "-L",
             "https://github.com/yt-dlp/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz",
-            "-o", "/workspace/ffmpeg.tar.xz"
+            "-o", "/tmp/ffmpeg.tar.xz"
         ], check=True)
-        subprocess.run(["tar", "-xf", "/workspace/ffmpeg.tar.xz", "-C", "/tmp/"], check=True)
-        import glob
-        bins = glob.glob("/workspace/ffmpeg-master-latest-linux64-gpl/bin/ffmpeg")
-        if bins:
-            import shutil
-            shutil.copy(bins[0], ffmpeg_path)
-            os.chmod(ffmpeg_path, os.stat(ffmpeg_path).st_mode | stat.S_IEXEC)
-            # Also copy ffprobe
-            probes = glob.glob("/workspace/ffmpeg-master-latest-linux64-gpl/bin/ffprobe")
-            if probes:
-                shutil.copy(probes[0], "/tmp/ffprobe")
-                os.chmod("/tmp/ffprobe", os.stat("/tmp/ffprobe").st_mode | stat.S_IEXEC)
-        os.environ["PATH"] = "/tmp:" + os.environ.get("PATH", "")
+        subprocess.run(["tar", "-xf", "/tmp/ffmpeg.tar.xz", "-C", "/tmp/"], check=True)
+        # Find extracted folder
+        dirs = glob.glob("/tmp/ffmpeg-master-latest-linux64-gpl*/bin/ffmpeg")
+        probe_dirs = glob.glob("/tmp/ffmpeg-master-latest-linux64-gpl*/bin/ffprobe")
+        if dirs:
+            shutil.copy(dirs[0], ffmpeg_path)
+            os.chmod(ffmpeg_path, 0o755)
+            print("ffmpeg installed at", ffmpeg_path)
+        if probe_dirs:
+            shutil.copy(probe_dirs[0], ffprobe_path)
+            os.chmod(ffprobe_path, 0o755)
+            print("ffprobe installed at", ffprobe_path)
+    # Always add /workspace to PATH
+    os.environ["PATH"] = "/workspace:" + os.environ.get("PATH", "")
+    print("PATH set to:", os.environ["PATH"][:50])
 
 _install_ffmpeg()
-
-subprocess.run(["apt-get", "update", "-qq"], check=False)
-subprocess.run(["apt-get", "install", "-y", "-qq", "ffmpeg"], check=False)
 
 from datetime import datetime
 from collections import Counter
@@ -116,13 +119,13 @@ def coach_analyze():
 # ================================================================
 def extract_audio(src):
     out = src + "_audio.wav"
-    try:
-        y, sr = librosa.load(src, sr=16000, mono=True)
-        import soundfile as sf
-        sf.write(out, y, 16000)
-        return out
-    except Exception as e:
-        raise ValueError("Audio extraction error: " + str(e))
+    result = subprocess.run(
+        ["/workspace/ffmpeg", "-y", "-i", src, "-ar", "16000", "-ac", "1", "-vn", out],
+        capture_output=True)
+    if result.returncode != 0:
+        raise ValueError("ffmpeg error: " + result.stderr.decode())
+    return out
+
 
 # ================================================================
 # VOICE ANALYZER
@@ -652,7 +655,7 @@ def analyze():
         is_video = False
         if ext in {".mp4", ".mov", ".avi", ".mkv", ".webm"}:
             probe = subprocess.run(
-                ["ffprobe", "-v", "error", "-select_streams", "v:0",
+                ["/workspace/ffprobe", "-v", "error", "-select_streams", "v:0",
                  "-show_entries", "stream=codec_name", "-of",
                  "default=noprint_wrappers=1:nokey=1", tmp_path],
                 capture_output=True)
@@ -664,7 +667,7 @@ def analyze():
             if ext == ".webm":
                 mp4_path = tmp_path + "_converted.mp4"
                 r = subprocess.run(
-                    ["ffmpeg", "-y", "-i", tmp_path, "-c:v", "libx264",
+                    ["/workspace/ffmpeg", "-y", "-i", tmp_path, "-c:v", "libx264",
                      "-preset", "fast", "-c:a", "aac", mp4_path],
                     capture_output=True)
                 if r.returncode != 0:
