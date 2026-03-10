@@ -1,4 +1,24 @@
-import os, re, math, json, warnings, tempfile, subprocess
+import os, re, math, json, warnings, tempfile, subprocess, stat
+
+# Install static ffmpeg binary
+def _install_ffmpeg():
+    ffmpeg_path = "/tmp/ffmpeg"
+    if not os.path.exists(ffmpeg_path):
+        subprocess.run([
+            "curl", "-L",
+            "https://github.com/yt-dlp/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz",
+            "-o", "/tmp/ffmpeg.tar.xz"
+        ], check=True)
+        subprocess.run(["tar", "-xf", "/tmp/ffmpeg.tar.xz", "-C", "/tmp/"], check=True)
+        import glob
+        bins = glob.glob("/tmp/ffmpeg-master-latest-linux64-gpl/bin/ffmpeg")
+        if bins:
+            import shutil
+            shutil.copy(bins[0], ffmpeg_path)
+            os.chmod(ffmpeg_path, os.stat(ffmpeg_path).st_mode | stat.S_IEXEC)
+    os.environ["PATH"] = "/tmp:" + os.environ.get("PATH", "")
+
+_install_ffmpeg()
 
 subprocess.run(["apt-get", "update", "-qq"], check=False)
 subprocess.run(["apt-get", "install", "-y", "-qq", "ffmpeg"], check=False)
