@@ -16,7 +16,12 @@ def _install_ffmpeg():
             import shutil
             shutil.copy(bins[0], ffmpeg_path)
             os.chmod(ffmpeg_path, os.stat(ffmpeg_path).st_mode | stat.S_IEXEC)
-    os.environ["PATH"] = "/tmp:" + os.environ.get("PATH", "")
+            # Also copy ffprobe
+            probes = glob.glob("/tmp/ffmpeg-master-latest-linux64-gpl/bin/ffprobe")
+            if probes:
+                shutil.copy(probes[0], "/tmp/ffprobe")
+                os.chmod("/tmp/ffprobe", os.stat("/tmp/ffprobe").st_mode | stat.S_IEXEC)
+        os.environ["PATH"] = "/tmp:" + os.environ.get("PATH", "")
 
 _install_ffmpeg()
 
