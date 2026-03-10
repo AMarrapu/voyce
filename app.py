@@ -2,7 +2,7 @@ import os, re, math, json, warnings, tempfile, subprocess, stat
 
 # Install static ffmpeg binary
 def _install_ffmpeg():
-    ffmpeg_path = "/tmp/ffmpeg"
+    ffmpeg_path = "/workspace/ffmpeg"
     if not os.path.exists(ffmpeg_path):
         subprocess.run([
             "curl", "-L",
