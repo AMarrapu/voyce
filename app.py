@@ -309,18 +309,19 @@ class VideoAnalyzer:
     def __init__(self, path):
         self.path = path
         self.results = {}
-        mf = mp.solutions.face_mesh
-        mp_ = mp.solutions.pose
-        mh = mp.solutions.hands
-        self.face = mf.FaceMesh(static_image_mode=False, max_num_faces=1,
-                                refine_landmarks=True, min_detection_confidence=.5,
-                                min_tracking_confidence=.5)
-        self.pose = mp_.Pose(static_image_mode=False, model_complexity=1,
-                             smooth_landmarks=True, min_detection_confidence=.5,
-                             min_tracking_confidence=.5)
-        self.hands = mh.Hands(static_image_mode=False, max_num_hands=2,
-                              min_detection_confidence=.5, min_tracking_confidence=.5)
-
+        import mediapipe as mp2
+        self.mp_face = mp2.solutions.face_mesh.FaceMesh(
+            static_image_mode=False, max_num_faces=1,
+            refine_landmarks=True, min_detection_confidence=.5,
+            min_tracking_confidence=.5)
+        self.mp_pose = mp2.solutions.pose.Pose(
+            static_image_mode=False, model_complexity=1,
+            smooth_landmarks=True, min_detection_confidence=.5,
+            min_tracking_confidence=.5)
+        self.mp_hands = mp2.solutions.hands.Hands(
+            static_image_mode=False, max_num_hands=2,
+            min_detection_confidence=.5, min_tracking_confidence=.5)
+        
     @staticmethod
     def _d(a, b):
         return math.sqrt((a[0] - b[0])**2 + (a[1] - b[1])**2)
