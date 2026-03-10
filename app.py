@@ -1,33 +1,7 @@
 import os, re, math, json, warnings, tempfile, subprocess, stat, glob, shutil
 
-# ================================================================
-# INSTALL STATIC FFMPEG BINARY
-# ================================================================
-def _install_ffmpeg():
-    ffmpeg_path = "/workspace/ffmpeg"
-    ffprobe_path = "/workspace/ffprobe"
-    if not os.path.exists(ffmpeg_path):
-        print("Downloading ffmpeg...")
-        subprocess.run([
-            "curl", "-L",
-            "https://github.com/yt-dlp/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz",
-            "-o", "/tmp/ffmpeg.tar.xz"
-        ], check=True)
-        subprocess.run(["tar", "-xf", "/tmp/ffmpeg.tar.xz", "-C", "/tmp/"], check=True)
-        dirs = glob.glob("/tmp/ffmpeg-master-latest-linux64-gpl*/bin/ffmpeg")
-        probe_dirs = glob.glob("/tmp/ffmpeg-master-latest-linux64-gpl*/bin/ffprobe")
-        if dirs:
-            shutil.copy(dirs[0], ffmpeg_path)
-            os.chmod(ffmpeg_path, 0o755)
-            print("ffmpeg installed at", ffmpeg_path)
-        if probe_dirs:
-            shutil.copy(probe_dirs[0], ffprobe_path)
-            os.chmod(ffprobe_path, 0o755)
-            print("ffprobe installed at", ffprobe_path)
-    os.environ["PATH"] = "/workspace:" + os.environ.get("PATH", "")
-    print("PATH set to:", os.environ["PATH"][:50])
-
-_install_ffmpeg()
+# ffmpeg is installed via start.sh before gunicorn boots
+# /workspace is prepended to PATH by start.sh
 
 from datetime import datetime
 from collections import Counter
