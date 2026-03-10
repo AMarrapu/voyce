@@ -7,17 +7,17 @@ def _install_ffmpeg():
         subprocess.run([
             "curl", "-L",
             "https://github.com/yt-dlp/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz",
-            "-o", "/tmp/ffmpeg.tar.xz"
+            "-o", "/workspace/ffmpeg.tar.xz"
         ], check=True)
-        subprocess.run(["tar", "-xf", "/tmp/ffmpeg.tar.xz", "-C", "/tmp/"], check=True)
+        subprocess.run(["tar", "-xf", "/workspace/ffmpeg.tar.xz", "-C", "/tmp/"], check=True)
         import glob
-        bins = glob.glob("/tmp/ffmpeg-master-latest-linux64-gpl/bin/ffmpeg")
+        bins = glob.glob("/workspace/ffmpeg-master-latest-linux64-gpl/bin/ffmpeg")
         if bins:
             import shutil
             shutil.copy(bins[0], ffmpeg_path)
             os.chmod(ffmpeg_path, os.stat(ffmpeg_path).st_mode | stat.S_IEXEC)
             # Also copy ffprobe
-            probes = glob.glob("/tmp/ffmpeg-master-latest-linux64-gpl/bin/ffprobe")
+            probes = glob.glob("/workspace/ffmpeg-master-latest-linux64-gpl/bin/ffprobe")
             if probes:
                 shutil.copy(probes[0], "/tmp/ffprobe")
                 os.chmod("/tmp/ffprobe", os.stat("/tmp/ffprobe").st_mode | stat.S_IEXEC)
